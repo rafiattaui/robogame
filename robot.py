@@ -20,11 +20,10 @@ zones = {
     f"zone{i}": random.sample(items,1)
     for i in range(0, 9)
 }
-print(zones) # Print zones for debugging
+# print(zones) # Print zones for debugging
 
 def battery_check(): # Check battery level
     batteries = list(zones.values())
-    print(batteries)
     global battery
     if battery <= 0:
         print("Battery is empty, game over!")
@@ -38,7 +37,7 @@ def battery_check(): # Check battery level
 def giveitem(): # Function to give item to robot
     global battery
     item = str(zones[zone_locations[tuple(currentpos[0])]]) # Retrieve current location and robot and the zone at current position of robot.
-    item = item[2:-2] # Remove brackets from string item for some reason.
+    item = item[2:-2] # String still contains brackets and double quotes, so remove them
     if item == 'battery+': # Check if item is battery+
         battery += 10
         print(f"Found battery, battery level is now {battery}")
@@ -46,13 +45,15 @@ def giveitem(): # Function to give item to robot
         battery -= 10
         print(f"Lost battery, battery level is now {battery}")
     zones[zone_locations[tuple(currentpos[0])]].pop() # Remove item from zone
+    inventory[item] = inventory.get(item, 0) + 1 # Add item to inventory
+    print(inventory)
 
 # Assign zones to locations in the array, are these techincally linked lists?
 zone_locations = {}
 for i in range(3):
     for j in range(3):
         zone_locations[(i, j)] = f"zone{i*3 + j}"
-print(zone_locations) # Print zone locations for debugging
+# print(zone_locations) # Print zone locations for debugging
 
 # Generate Grid for navigation
 zonemap = numpy.zeros([3,3])
@@ -79,7 +80,7 @@ while run != 3: # Run game until user quits
             for key in items:
                 print(f"{key} = {inventory[key]}")
         case 1:
-            move = (input("Enter direction: ")) # Bear with me, why did I do this to myself?
+            move = (input("Enter direction: ")).lower() # Bear with me, why did I do this to myself?
             currentpos = numpy.argwhere(zonemap == 1) # Get current position of robot and stores it as a array [[x,y]]
             if move == "up":
                 if currentpos[0][0] > 0: # Check if robot is at the top edge
