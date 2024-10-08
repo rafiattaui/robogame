@@ -41,6 +41,7 @@ def battery_check(): # Check battery level
     
 
 def giveitem(): # Function to give item to robot
+    global score
     global battery
     item = str(zones[zone_locations[tuple(currentpos[0])]]) # Retrieve current location and robot and the zone at current position of robot.
     item = item[2:-2] # String still contains brackets and double quotes, so remove them
@@ -82,51 +83,53 @@ while run != 3: # Run game until user quits
     print("3. Quit Game")
     print(" ")
     run = int(input("Enter your choice: "))
+    if isinstance(run, int) and run <= 3 and run > 0 : # Check if input is an integer and within choices
 
-    match run:
-        case 2:
-            items = inventory.keys()
-            print(f"Battery at {battery}, and you have") # Print battery level
-            for key in items: # Show inventory
-                print(f"{key} = {inventory[key]}")
-        case 1:
-            move = (input("Enter direction: ")).lower() # Bear with me, why did I do this to myself?
-            currentpos = numpy.argwhere(zonemap == 1) # Get current position of robot and stores it as a array [[x,y]]
-            if move == "up":
-                if currentpos[0][0] > 0: # Check if robot is at the top edge
-                    zonemap[currentpos[0][0], currentpos[0][1]] = 0 # Set current position to 0
-                    zonemap[currentpos[0][0] - 1, currentpos[0][1]] = 1 # Set new position to 1
-                    print(f"{zonemap}\n")
-                    giveitem()
-                else:
-                    print("Cannot move up, already at the top edge")
+        match run:
+            case 2:
+                items = inventory.keys()
+                print(f"Battery at {battery}, and you have") # Print battery level
+                for key in items: # Show inventory
+                    print(f"{key} = {inventory[key]}")
+            case 1:
+                move = (input("Enter direction: ")).lower() # Bear with me, why did I do this to myself?
+                currentpos = numpy.argwhere(zonemap == 1) # Get current position of robot and stores it as a array [[x,y]]
+                if move == "up":
+                    if currentpos[0][0] > 0: # Check if robot is at the top edge
+                        zonemap[currentpos[0][0], currentpos[0][1]] = 0 # Set current position to 0
+                        zonemap[currentpos[0][0] - 1, currentpos[0][1]] = 1 # Set new position to 1
+                        print(f"{zonemap}\n")
+                        giveitem()
+                    else:
+                        print("Cannot move up, already at the top edge")
+                        
+                elif move == "down":
+                    if currentpos[0][0] < 3: # Check if robot is at the bottom edge
+                        zonemap[currentpos[0][0], currentpos[0][1]] = 0
+                        zonemap[currentpos[0][0] + 1, currentpos[0][1]] = 1
+                        print(f"{zonemap}\n")
+                        giveitem()
+                    else:
+                        print("Cannot move up, already at the bottom edge")
+                elif move == "left":
+                    if currentpos[0][1] > 0: # Check if robot is at the left edge
+                        zonemap[currentpos[0][0], currentpos[0][1]] = 0
+                        zonemap[currentpos[0][0], currentpos[0][1] - 1] = 1
+                        print(f"{zonemap}\n")
+                        giveitem()
+                    else: print("Already at the left edge")
                     
-            elif move == "down":
-                if currentpos[0][0] < 3: # Check if robot is at the bottom edge
-                    zonemap[currentpos[0][0], currentpos[0][1]] = 0
-                    zonemap[currentpos[0][0] + 1, currentpos[0][1]] = 1
-                    print(f"{zonemap}\n")
-                    giveitem()
-                else:
-                    print("Cannot move up, already at the bottom edge")
-            elif move == "left":
-                if currentpos[0][1] > 0: # Check if robot is at the left edge
-                    zonemap[currentpos[0][0], currentpos[0][1]] = 0
-                    zonemap[currentpos[0][0], currentpos[0][1] - 1] = 1
-                    print(f"{zonemap}\n")
-                    giveitem()
-                else: print("Already at the left edge")
+                elif move == "right":
+                    if currentpos[0][1] < 3: # Check if robot is at the right edge
+                        zonemap[currentpos[0][0], currentpos[0][1]] = 0
+                        zonemap[currentpos[0][0], currentpos[0][1] + 1] = 1
+                        print(f"{zonemap}\n")
+                        giveitem()
+                    else:
+                        print("Already at the right edge")
                 
-            elif move == "right":
-                if currentpos[0][1] < 3: # Check if robot is at the right edge
-                    zonemap[currentpos[0][0], currentpos[0][1]] = 0
-                    zonemap[currentpos[0][0], currentpos[0][1] + 1] = 1
-                    print(f"{zonemap}\n")
-                    giveitem()
-                else:
-                    print("Already at the right edge")
-            
-            else: print("Invalid move") # If user enters invalid move
-            battery_check()
-            
+                else: print("Invalid move") # If user enters invalid move
+                battery_check()
+    else:
+        print("Invalid input, please enter a number 1-3")
 print("Bye")
