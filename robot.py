@@ -7,8 +7,11 @@ items = ['battery+','battery-','battery+']
 
 # Initialize battery and inventory globally so functions can access it
 global battery
+global score
+score = 0
 battery = 20
 inventory = {}
+
 
 # Welcome message
 print("Welcome to the robot game! You are a robot in a 3x3 grid, and you need to navigate to find the battery to recharge yourself.")
@@ -27,10 +30,12 @@ def battery_check(): # Check battery level
     global battery
     if battery <= 0:
         print("Battery is empty, game over!")
+        print(f"Your score is {score}")
         exit()
     remaining_batteries = sum(item.count('battery+') for item in zones.values())
     if remaining_batteries == 0:
         print("No more battery+ in zones, game over!")
+        print(f"Your score is {score}")
         exit()
     
 
@@ -41,9 +46,13 @@ def giveitem(): # Function to give item to robot
     if item == 'battery+': # Check if item is battery+
         battery += 10
         print(f"Found battery, battery level is now {battery}")
+        score += 1 # Add 1 score for getting a battery
+        
     elif item == 'battery-': # Check if item is battery-
         battery -= 10
         print(f"Lost battery, battery level is now {battery}")
+        score -= 1 # Subtract 1 score for losing a battery
+        
     zones[zone_locations[tuple(currentpos[0])]].pop() # Remove item from zone
     inventory[item] = inventory.get(item, 0) + 1 # Add item to inventory
     print(inventory)
@@ -76,8 +85,8 @@ while run != 3: # Run game until user quits
     match run:
         case 2:
             items = inventory.keys()
-            print(f"Battery at {battery}, and you have")
-            for key in items:
+            print(f"Battery at {battery}, and you have") # Print battery level
+            for key in items: # Show inventory
                 print(f"{key} = {inventory[key]}")
         case 1:
             move = (input("Enter direction: ")).lower() # Bear with me, why did I do this to myself?
