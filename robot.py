@@ -27,6 +27,7 @@ zones = {
 
 def battery_check(): # Check battery level
     batteries = list(zones.values())
+    global score
     global battery
     if battery <= 0:
         print("Battery is empty, game over!")
